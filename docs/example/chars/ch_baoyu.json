@@ -1,0 +1,19 @@
+{
+  "id": "ch_baoyu",
+  "name": "贾宝玉",
+  "type": "人物",
+  "introduction": [
+    "荣国府贾政与王夫人之次子，衔通灵宝玉而生",
+    "面若中秋之月，色如春晓之花，鬓若刀裁，眉如墨画",
+    "性情痴顽，语出惊人，被王夫人称为'混世魔王'",
+    "最讨厌世俗功名，喜欢在女孩堆里厮混",
+    "第一印象：'这个妹妹我曾见过的'",
+    "对'玉'有执念——因其他姐妹和黛玉都没有而摔玉"
+  ],
+  "relationships": [
+    { "target_id": "ch_jiamu", "relation_type": "祖孙", "description": "贾母最溺爱的孙子" },
+    { "target_id": "ch_daiyu", "relation_type": "表兄妹（初遇）", "description": "一见如故，为她取名颦颦，因她无玉而摔玉" },
+    { "target_id": "ch_wangfuren", "relation_type": "母子", "description": "母亲视他为草根祸胎，实则非常关心" }
+  ],
+  "rule_refs": []
+}

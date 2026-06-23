@@ -1,0 +1,19 @@
+{
+  "id": "ch_wangxifeng",
+  "name": "王熙凤",
+  "type": "人物",
+  "introduction": [
+    "贾府实际管家人，贾琏之妻，王夫人之内侄女",
+    "丹凤三角眼，柳叶吊梢眉，身量苗条，体格风骚",
+    "性格泼辣干练，八面玲珑，极会说话",
+    "在贾母面前最受宠——敢说敢笑，调节气氛",
+    "未见其人先闻其声——标志性出场方式",
+    "对下人严厉，对上奉承，对同辈机敏"
+  ],
+  "relationships": [
+    { "target_id": "ch_jiamu", "relation_type": "祖孙（孙媳）", "description": "极尽讨好之能事，是贾母的开心果" },
+    { "target_id": "ch_daiyu", "relation_type": "表嫂", "description": "初见就热情相待，连声夸赞安排住处" },
+    { "target_id": "ch_wangfuren", "relation_type": "姑侄", "description": "王夫人是她的姑母兼上级" }
+  ],
+  "rule_refs": []
+}

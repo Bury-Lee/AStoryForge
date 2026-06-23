@@ -1,0 +1,18 @@
+{
+  "id": "ch_tanchun",
+  "name": "贾探春",
+  "type": "人物",
+  "introduction": [
+    "荣国府三小姐，贾政之庶女（赵姨娘所生）",
+    "削肩细腰，长挑身材，鸭蛋脸面，俊眼修眉",
+    "顾盼神飞，文彩精华，见之忘俗",
+    "精明强干有志向，是贾府姐妹中最有魄力的一位",
+    "好书法"
+  ],
+  "relationships": [
+    { "target_id": "ch_daiyu", "relation_type": "表姐妹", "description": "初见黛玉，目光中流露出欣赏" },
+    { "target_id": "ch_yingchun", "relation_type": "姐妹", "description": "迎春是她的堂姐" },
+    { "target_id": "ch_xichun", "relation_type": "姐妹", "description": "惜春最小，探春常护着她" }
+  ],
+  "rule_refs": []
+}

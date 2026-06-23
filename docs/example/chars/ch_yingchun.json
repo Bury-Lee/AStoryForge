@@ -1,0 +1,16 @@
+{
+  "id": "ch_yingchun",
+  "name": "贾迎春",
+  "type": "人物",
+  "introduction": [
+    "荣国府二小姐，贾赦之女",
+    "肌肤微丰，合中身材，腮凝新荔，鼻腻鹅脂",
+    "温柔沉默，观之可亲——性格软弱，人称'木头人'",
+    "好棋，常独自研究棋谱"
+  ],
+  "relationships": [
+    { "target_id": "ch_daiyu", "relation_type": "表姐妹", "description": "初见黛玉，温柔相待" },
+    { "target_id": "ch_tanchun", "relation_type": "姐妹", "description": "探春是她的堂妹，性格比她强得多" }
+  ],
+  "rule_refs": []
+}

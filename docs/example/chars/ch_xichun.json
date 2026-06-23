@@ -1,0 +1,15 @@
+{
+  "id": "ch_xichun",
+  "name": "贾惜春",
+  "type": "人物",
+  "introduction": [
+    "荣国府四小姐，贾珍之妹（宁国府那边过来的）",
+    "身量未足，形容尚小——本回中还只是个孩子",
+    "性格冷淡孤僻，后来善画",
+    "年纪最小，对黛玉的到来懵懵懂懂"
+  ],
+  "relationships": [
+    { "target_id": "ch_daiyu", "relation_type": "表姐妹", "description": "初见黛玉，因年纪小只是跟着姐姐们行礼" }
+  ],
+  "rule_refs": []
+}

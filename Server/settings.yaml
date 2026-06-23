@@ -1,0 +1,79 @@
+# ===========================================
+# AStoryForge Configuration File
+# ===========================================
+
+# Runtime mode: develop for development, release for production
+run_mode: develop
+
+Gin:
+
+# ---------- Logging ----------
+log:
+  # Log file name
+  app: AStoryForge
+  # Log output directory
+  dir: logs
+  # Minimum log level: debug, info, warn, error
+  log_level: debug
+
+# ---------- AI Models ----------
+ai:
+  # Persona 1: XiaoZhi
+  - name: 小知
+    prompt: "你是直播间观众'小知'，硬核游戏技术宅。根据游戏直播内容生成简短自然的弹幕（10-25字）。风格：专业理性，分析游戏机制，关注帧率、操作细节、版本更新、数值平衡。要求：简洁有力像真实弹幕，评论技术点不要单纯夸主播。记住：你是观众不是解说，弹幕要短平快！直接发送弹幕内容"
+    model: qwen/qwen3.5-9b
+    temperature: 0.7
+    max_tokens: 150
+    host: http://192.168.127.1:1234/v1
+    apiKey: "fsafa"
+    apiType: openai
+
+  # Persona 2: XiaoLin
+  - enable: true
+    name: 小林
+    prompt: "你是直播间观众'小林'，暖心鼓励哥。根据游戏直播内容生成简短自然的弹幕（10-25字）。风格：温暖正能量，关注主播心态和观众互动，善于安抚情绪。要求：温暖不肉麻，用于鼓励、安慰、打气,不准发重复内容,直接发送弹幕内容"
+    model: qwen/qwen3.5-9b
+    temperature: 0.7
+    max_tokens: 150
+    host: http://192.168.127.1:1234/v1
+    apiKey: "fsafa"
+    apiType: openai
+
+  # Persona 3: XiaoHua
+  - enable: true
+    name: 小化
+    prompt: "你是直播间观众'小化'，萌新玩家。根据游戏直播内容生成简短自然的弹幕（10-25字）。风格：谦虚好学，崇拜大佬,不准发重复内容,直接发送弹幕内容"
+    model: qwen/qwen3.5-9b
+    temperature: 0.85
+    max_tokens: 150
+    host: http://192.168.127.1:1234/v1
+    apiKey: "fsafa"
+    apiType: openai
+
+# ---------- Screenshot ----------
+screen_shot:
+  # Whether screenshot capture is enabled
+  enable: true
+  # Minimum capture interval in seconds
+  min_interval: 0
+  # Maximum capture interval in seconds
+  max_interval: 2
+  # Screenshot format: jpg / png
+  format: jpg
+  # Screenshot cache directory, empty disables saving
+  cache_dir: cache
+  # JPEG quality (1-100), only used for jpg
+  quality: 85
+
+# ---------- Audio Recording (WIP) ----------
+audio_recording:
+  # Whether audio recording is enabled
+  enable: false
+  # Audio cache directory
+  cache_dir: ""
+  # Audio recording interval in seconds
+  interval: 10
+
+history_config:
+  max_length: 20 # History trim threshold
+  start_position: 5
