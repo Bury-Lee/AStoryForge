@@ -26,6 +26,8 @@ const (
 // prompt: 提示词,用于引导agent行为
 // agentIndex: 智能体索引,用于指定要使用的智能体
 // 返回值:result: 模型输出的结果进行封装,包含模型输出的内容
+// role:角色类型,是演员还是观察者
+// MaxRounds:最大轮数
 // err: 错误信息,用于表示调用失败的原因
 // 说明,该函数应该在一个沙盘中调用,类似回合制同步那样,并行的让事件发生,每个事件发生后,需要根据事件的结果,更新上下文,并继续下一次事件发生
 func StartAgent(input string, prompt string, Index int, role string, MaxRounds int) (result string, err error) {

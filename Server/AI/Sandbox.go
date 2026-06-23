@@ -141,13 +141,32 @@ func Sandbox(ctx context.Context, req SandboxRequest, obj *story_struct.ProjectO
 
 // sandboxType为推演后续时的流程
 func SandboxContinue(ctx context.Context, req SandboxRequest, obj *story_struct.ProjectObj) (story_struct.SimulationSession, error) {
-	//组装提示词,分配演员Agent和观察者Agent,为每个参与的实体都创建一个agent
+	//组装提示词,分配演员Agent和观察者Agent,为每个参与的实体都创建一次agent任务
 
-	// go StartAgent(ctx, req, obj)
+	var actionList []Action = make([]Action, len(req.ParticipantIDs))
+	for i, actorID := range req.ParticipantIDs {
+		go StartAgent("", "", i, "actor", req.ParticipantIDs[i])
+	}
 
 	//每一步都应该要组装SimulationSession
 	return story_struct.SimulationSession{}, ErrSandboxNotImplemented
 }
+
+// 表示一次演员Agent的行为申请.
+type Action struct {
+	ActorIndex int               `json:"actor_index"` // debug参数,演员Agent的索引,从0开始计数
+	Actor      string            `json:"actor"`       // debug参数,演员Agent的名称
+	Action     string            `json:"action"`      // 具体的行为行动
+	Params     map[string]string `json:"params"`      // 行动的详细标注
+	// 例如: 为某个角色添加一个事件,则需要指定事件的类型,事件的内容,事件的时间等.
+	Thinking string `json:"think"` // 行动时的想法,思考过程等.当action和params为空时,则认为是跳过.当action和params不为空时,则认为是执行该行动.当action为空时,则认为是角色仅仅在进行思考和心理活动.
+}
+type ActionList struct {
+	Action []Action   //列表
+	mu     sync.Mutex //并发保护
+}
+
+var actionList ActionList
 
 //如果可以,为某个角色的每一步行动打分就好了,计算其每一步的平均分,自由选择回退节点,像是git那样,带来更高的容错空间和更灵活的控制能力
 //不过目前做不到

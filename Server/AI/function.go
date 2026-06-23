@@ -24,7 +24,7 @@ type TestToolArgs struct {
 
 // 目标:调用这个函数
 func TestTool(ctx context.Context, request mcp.CallToolRequest) (*mcp.CallToolResult, error) {
-	logrus.Debugf("调用SQL查询工具%+v\n", request)
+	logrus.Debugf("%+v\n", request)
 
 	// 通过 JSON 序列化/反序列化
 	argsBytes, err := json.Marshal(request.Params.Arguments)
