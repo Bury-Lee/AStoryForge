@@ -26,6 +26,10 @@ const (
 	// SandboxAssessmentRejected 表示行动严重不合理,需要触发回退或人工介入。
 	SandboxAssessmentRejected SandboxAssessment = "rejected"
 )
+const (
+	演员  string = "演员"
+	观察者 string = "观察者"
+)
 
 // SandboxRollbackReason 表示本轮需要回退的原因。
 type SandboxRollbackReason string
@@ -43,7 +47,7 @@ const (
 
 const (
 	// SandboxDefaultMaxRounds 默认最大推演轮数。
-	SandboxDefaultMaxRounds = 12
+	SandboxDefaultMaxRounds = 50
 	// SandboxDefaultMaxRollbackCount 默认最大自动回退次数。
 	SandboxDefaultMaxRollbackCount = 3
 	// SandboxDefaultMaxNoProgressRounds 默认允许的连续无进展轮数。
@@ -143,30 +147,16 @@ func Sandbox(ctx context.Context, req SandboxRequest, obj *story_struct.ProjectO
 func SandboxContinue(ctx context.Context, req SandboxRequest, obj *story_struct.ProjectObj) (story_struct.SimulationSession, error) {
 	//组装提示词,分配演员Agent和观察者Agent,为每个参与的实体都创建一次agent任务
 
-	var actionList []Action = make([]Action, len(req.ParticipantIDs))
 	for i, actorID := range req.ParticipantIDs {
-		go StartAgent("", "", i, "actor", req.ParticipantIDs[i])
+
+		var 演员obj = obj.Entity[actorID]
+		var 提示词 = "你是" + 演员obj.Name + "," + "你的特点" + 演员obj.Introduction[1] //......反正把这里组装好
+		go StartAgent(提示词, "", i, 演员, SandboxDefaultMaxRounds)
 	}
 
 	//每一步都应该要组装SimulationSession
 	return story_struct.SimulationSession{}, ErrSandboxNotImplemented
 }
-
-// 表示一次演员Agent的行为申请.
-type Action struct {
-	ActorIndex int               `json:"actor_index"` // debug参数,演员Agent的索引,从0开始计数
-	Actor      string            `json:"actor"`       // debug参数,演员Agent的名称
-	Action     string            `json:"action"`      // 具体的行为行动
-	Params     map[string]string `json:"params"`      // 行动的详细标注
-	// 例如: 为某个角色添加一个事件,则需要指定事件的类型,事件的内容,事件的时间等.
-	Thinking string `json:"think"` // 行动时的想法,思考过程等.当action和params为空时,则认为是跳过.当action和params不为空时,则认为是执行该行动.当action为空时,则认为是角色仅仅在进行思考和心理活动.
-}
-type ActionList struct {
-	Action []Action   //列表
-	mu     sync.Mutex //并发保护
-}
-
-var actionList ActionList
 
 //如果可以,为某个角色的每一步行动打分就好了,计算其每一步的平均分,自由选择回退节点,像是git那样,带来更高的容错空间和更灵活的控制能力
 //不过目前做不到

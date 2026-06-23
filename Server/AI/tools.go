@@ -132,7 +132,11 @@ func NewAgentTools() AITool {
 }
 
 // NewActorTools 注册演员可用工具集
-// 说明: 演员负责日常剧情搭建与编辑, 可执行完整的 CRUD 操作(除工程级新建/删除/校验外)
+// 说明: 演员负责提交剧情修改意图, 不再直接执行写操作。
+//       所有对工程对象的修改必须通过 submit_action_proposal 提交行为申请,
+//       由观察者/裁判角色审查批准后统一执行。
+//       设计理由: CQS(命令查询分离)模式——演员仅持有"读"和"申请"权限,
+//       不持有任何"写"权限, 避免误操作, 同时形成可追溯的决策链。
 func NewActorTools() AITool {
 	a := &agentTools{}
 	a.tools = make(map[string]ToolDefinition)
@@ -144,40 +148,30 @@ func NewActorTools() AITool {
 	a.AddTool(mustTool("list_projects"))
 	a.AddTool(mustTool("load_project"))
 
-	// === 事件 CRUD ===
+	// === 事件读 ===
 	a.AddTool(mustTool("list_events"))
 	a.AddTool(mustTool("get_event"))
-	a.AddTool(mustTool("create_event"))
-	a.AddTool(mustTool("update_event"))
-	a.AddTool(mustTool("delete_event"))
-	a.AddTool(mustTool("set_event_locked"))
-	a.AddTool(mustTool("update_event_participants"))
 
-	// === 事件边 CRUD ===
-	a.AddTool(mustTool("create_event_edge"))
-	a.AddTool(mustTool("update_event_edge"))
-	a.AddTool(mustTool("delete_event_edge"))
-
-	// === 子事件 ===
-	a.AddTool(mustTool("attach_sub_event"))
-	a.AddTool(mustTool("move_sub_event"))
-	a.AddTool(mustTool("detach_sub_event"))
-
-	// === 实体 CRUD ===
+	// === 实体读 ===
 	a.AddTool(mustTool("list_entities"))
 	a.AddTool(mustTool("get_entity"))
-	a.AddTool(mustTool("create_entity"))
-	a.AddTool(mustTool("update_entity"))
-	a.AddTool(mustTool("delete_entity"))
 
 	// === 画布 / 编译 ===
 	a.AddTool(mustTool("get_story_graph"))
 	a.AddTool(mustTool("make_markdown"))
 	a.AddTool(mustTool("make_mermaid"))
 
-	// === 主链与保存 ===
-	a.AddTool(mustTool("update_project_spine"))
-	a.AddTool(mustTool("save_project"))
+	// === 校验 ===
+	a.AddTool(mustTool("validate_project"))
+
+	// === 行为申请（替代直接写操作）===
+	// 说明: 以下四个工具是演员对工程对象做修改的唯一入口。
+	//       submit_action_proposal 承载所有写入意图, action_type 字段指定具体操作类型,
+	//       payload 字段携带参数, 结构与对应 CRUD 工具一致。
+	a.AddTool(mustTool("submit_action_proposal"))
+	a.AddTool(mustTool("list_proposals"))
+	a.AddTool(mustTool("get_proposal"))
+	a.AddTool(mustTool("withdraw_proposal"))
 
 	return a
 }
@@ -217,10 +211,17 @@ func NewDirectorTools() AITool {
 }
 
 // NewObserverTools 注册观察者可用工具集
-// 说明: 观察者仅可读取数据与状态, 不允许任何修改/创建/删除操作
+// 说明: 观察者负责审查演员提交的行为申请, 批准后自动执行修改并写回工程。
+//       持有所有读工具(用于审查前验证上下文)和审查工具(review_proposal / list_pending_proposals)。
+//       设计理由: 观察者不直接调用写工具(create_event 等), 而是通过 review_proposal
+//       内部调用的 executeProposal() 分发器间接执行, 确保审批与执行原子化。
+//       注意: 此前版本误将 NewDirectorTools 的写工具复制到此工厂, 已修正。
 func NewObserverTools() AITool {
 	a := &agentTools{}
 	a.tools = make(map[string]ToolDefinition)
+
+	// === 调试 ===
+	a.AddTool(TestToolDefinition())
 
 	// === 工程读 ===
 	a.AddTool(mustTool("list_projects"))
@@ -246,29 +247,11 @@ func NewObserverTools() AITool {
 	a.AddTool(mustTool("get_simulation"))
 	a.AddTool(mustTool("get_generation_task"))
 
-	a.AddTool(TestToolDefinition())
-
-	// === 工程读 ===
-	a.AddTool(mustTool("list_projects"))
-	a.AddTool(mustTool("load_project"))
-
-	// === 工程管理 ===
-	a.AddTool(mustTool("create_project"))
-	a.AddTool(mustTool("update_project_meta"))
-	a.AddTool(mustTool("delete_project"))
-	a.AddTool(mustTool("update_project_spine"))
-
-	// === 画布 / 编译 ===
-	a.AddTool(mustTool("get_story_graph"))
-	a.AddTool(mustTool("make_markdown"))
-	a.AddTool(mustTool("make_mermaid"))
-
-	// === 校验 ===
-	a.AddTool(mustTool("validate_project"))
-
-	// === 模拟 / 生成任务查询 ===
-	a.AddTool(mustTool("get_simulation"))
-	a.AddTool(mustTool("get_generation_task"))
+	// === 审查工具 ===
+	// 说明: 以下两个工具是观察者审查行为申请的入口。
+	//       review_proposal 批准后自动调用 executeProposal 执行修改。
+	a.AddTool(mustTool("review_proposal"))
+	a.AddTool(mustTool("list_pending_proposals"))
 
 	return a
 }
